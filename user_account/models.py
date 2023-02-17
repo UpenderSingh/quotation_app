@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
+from phonenumber_field.modelfields import PhoneNumberField
+
 
 #  Custom User Manager
 class UserManager(BaseUserManager):
@@ -47,7 +49,7 @@ class User(AbstractBaseUser):
   is_admin = models.BooleanField(default=False)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
-
+  phone_number = PhoneNumberField(blank=True)
   objects = UserManager()
 
   USERNAME_FIELD = 'email'

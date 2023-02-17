@@ -5,11 +5,15 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from user_account.serializers import (
   UserRegistrationSerializer, UserLoginSerializer,
-  UserProfileSerializer)
+  UserProfileSerializer, CustomerSearchSerializer)
 from user_account.renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
-from django.views.generic import TemplateView
+from django.views.generic import View, TemplateView
+from rest_framework import generics
+from rest_framework.filters import SearchFilter
+from user_account.models import User
+
 
 # Generate Token Manually
 def get_tokens_for_user(user):
@@ -54,3 +58,18 @@ class UserProfileView(APIView):
     serializer = UserProfileSerializer(request.user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class LoginPageView(View):
+    template_name = 'user_account/dashboardpage.html'
+    
+    def get(self, request):
+        #form = self.form_class()
+        message = ''
+        return render(request, self.template_name, context={'message': message})
+
+
+class CustomerSearchView(generics.ListAPIView):
+   queryset = User.objects.all()
+   serializer_class = CustomerSearchSerializer
+   filter_backends = [SearchFilter]
+   search_fields = ['id', 'name', 'email'] 
